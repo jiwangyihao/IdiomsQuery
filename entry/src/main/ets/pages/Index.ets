@@ -4,13 +4,14 @@ import router from '@ohos.router'
 let httpRequest = http.createHttp();
 
 interface ListHistory {
-  number: string
-  area: string
-  areacode: string
-  zip: string
-  company: string
-  province: string
-  city: string
+  name: string
+  pinyin: string
+  jbsy: string[]
+  xxsy: string[]
+  chuchu: string
+  liju: string
+  jyc: string[]
+  fyc: string[]
 }
 
 @Entry
@@ -20,12 +21,12 @@ struct Index {
 
   build() {
     Column() {
-      Search({ placeholder: '输入电话号码' })
+      Search({ placeholder: '输入要查询的成语' })
         .searchButton('查询')
         .height(40)
         .margin(20)
         .onSubmit((value: string) => {
-          httpRequest.request("https://apis.juhe.cn/mobile/get?dtype=&key=68b22126dba600fc2d240a8ef5a43270&phone=" + value, {
+          httpRequest.request("http://apis.juhe.cn/idioms/query?key=00587dc8bdc9740de313f19b85d08ebc&wd=" + value, {
             header: {
               'Content-Type': 'application/json'
             }
@@ -33,13 +34,14 @@ struct Index {
             console.info('Result:' + data.result);
             const res = JSON.parse(<string> data.result);
             let item: ListHistory = {
-              number: value,
-              area: res.result.province + " · " + res.result.city,
-              areacode: res.result.areacode,
-              zip: res.result.zip,
-              company: res.result.company,
-              province: res.result.province,
-              city: res.result.city
+              name: value,
+              pinyin: res.result.pinyin,
+              jbsy: res.result.jbsy,
+              xxsy: res.result.xxsy,
+              chuchu: res.result.chuchu,
+              liju: res.result.liju,
+              jyc: res.result.jyc,
+              fyc: res.result.fyc
             }
             console.log(JSON.stringify(item))
             this.QueryHistory.push(item);
@@ -59,16 +61,17 @@ struct Index {
                       .margin({ top: 10, bottom: 10, right: 10 })
                       .height(54)
                     Column() {
-                      Text(item.number)
+                      Text(item.name)
                         .fontSize(16)
                         .fontWeight(FontWeight.Bold)
-                      Text(item.area)
+                      Text(item.pinyin)
                         .fontSize(12)
-                      Text(item.company)
+                      Text(item.jbsy.join('；'))
+                        .fontSize(12)
+                        .maxLines(1)
+                      Text(item.chuchu)
                         .fontSize(12)
                         .maxLines(2)
-                      Text(item.zip + " · " + item.areacode)
-                        .fontSize(12)
                     }
                     .flexShrink(1)
                     .justifyContent(FlexAlign.Center)

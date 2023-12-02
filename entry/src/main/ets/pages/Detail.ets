@@ -1,13 +1,14 @@
 import router from '@ohos.router'
 
 interface ListHistory {
-  number: string
-  area: string
-  areacode: string
-  zip: string
-  company: string
-  province: string
-  city: string
+  name: string
+  pinyin: string
+  jbsy: string[]
+  xxsy: string[]
+  chuchu: string
+  liju: string
+  jyc: string[]
+  fyc: string[]
 }
 
 @Entry
@@ -15,19 +16,20 @@ interface ListHistory {
 struct Detail {
   @State message: string = 'Hello World'
   @State Query: ListHistory = AppStorage.SetAndLink('Query', {
-    "number": "",
-    "area": "",
-    "areacode": "",
-    "zip": "",
-    "company": "",
-    "province": "",
-    "city": ""
+    "name": "",
+    "pinyin": "",
+    "jbsy": [],
+    "xxsy": [],
+    "chuchu": "",
+    "liju": "",
+    "jyc": [],
+    "fyc": []
   }).get()
 
   build() {
     Row() {
       Column() {
-        Text("<  手机号详情")
+        Text("<  成语详情")
           .fontSize(18)
           .width('100%')
           .margin({ top: 10, bottom: 20, left: 20 })
@@ -42,16 +44,17 @@ struct Detail {
             .margin({ top: 10, bottom: 10, right: 10 })
             .height(54)
           Column() {
-            Text(this.Query.number)
+            Text(this.Query.name)
               .fontSize(16)
               .fontWeight(FontWeight.Bold)
-            Text(this.Query.area)
+            Text(this.Query.pinyin)
               .fontSize(12)
-            Text(this.Query.company)
+            Text(this.Query.jbsy.join('；'))
+              .fontSize(12)
+              .maxLines(1)
+            Text(this.Query.chuchu)
               .fontSize(12)
               .maxLines(2)
-            Text(this.Query.zip+" · "+this.Query.areacode)
-              .fontSize(12)
           }
           .flexShrink(1)
           .justifyContent(FlexAlign.Center)
@@ -72,10 +75,10 @@ struct Detail {
             ListItem() {
               Row() {
                 Column() {
-                  Text("省份")
+                  Text("拼音")
                     .fontSize(16)
                     .fontWeight(FontWeight.Bold)
-                  Text(this.Query.province)
+                  Text(this.Query.pinyin)
                     .fontSize(24)
                     .margin({ top: 10 })
                 }
@@ -92,10 +95,10 @@ struct Detail {
             ListItem() {
               Row() {
                 Column() {
-                  Text("城市")
+                  Text("详细释义")
                     .fontSize(16)
                     .fontWeight(FontWeight.Bold)
-                  Text(this.Query.city)
+                  Text(this.Query.xxsy.join('\n'))
                     .fontSize(24)
                     .margin({ top: 10 })
                 }
@@ -112,10 +115,10 @@ struct Detail {
             ListItem() {
               Row() {
                 Column() {
-                  Text("运营商")
+                  Text("出处")
                     .fontSize(16)
                     .fontWeight(FontWeight.Bold)
-                  Text(this.Query.company)
+                  Text(this.Query.chuchu)
                     .fontSize(24)
                     .margin({ top: 10 })
                 }
@@ -132,10 +135,10 @@ struct Detail {
             ListItem() {
               Row() {
                 Column() {
-                  Text("地区编码")
+                  Text("近义词")
                     .fontSize(16)
                     .fontWeight(FontWeight.Bold)
-                  Text(this.Query.areacode)
+                  Text(this.Query.jyc?this.Query.jyc.join('、'):"暂无")
                     .fontSize(24)
                     .margin({ top: 10 })
                 }
@@ -152,10 +155,10 @@ struct Detail {
             ListItem() {
               Row() {
                 Column() {
-                  Text("邮政编码")
+                  Text("反义词")
                     .fontSize(16)
                     .fontWeight(FontWeight.Bold)
-                  Text(this.Query.zip)
+                  Text(this.Query.fyc?this.Query.fyc.join('、'):"暂无")
                     .fontSize(24)
                     .margin({ top: 10 })
                 }

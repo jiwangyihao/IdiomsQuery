@@ -17,7 +17,7 @@ export default class EntryAbility extends UIAbility {
         try {
             data_preferences.getPreferences(this.context, 'QueryHistory', function (err, val) {
                 if (err) {
-                    console.error("Failed to get preferences. code =" + err.code + ", message =" + err.message);
+                    console.error("Failed to get data_preferences. code =" + err.code + ", message =" + err.message);
                     return;
                 }
                 preferences = val;
@@ -49,26 +49,22 @@ export default class EntryAbility extends UIAbility {
     onWindowStageDestroy() {
         // Main window is destroyed, release UI related resources
         hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageDestroy');
-        const ExpressingList = AppStorage.SetAndLink('ExpressingList', []).get();
-        const ExpressedList = AppStorage.SetAndLink('ExpressedList', []).get();
-        const ExpressList = ExpressingList.concat(ExpressedList);
+        const QueryHistory = AppStorage.SetAndLink('QueryHistory', []).get();
         let preferences = null;
         try {
-            data_preferences.getPreferences(this.context, 'ExpressList', function (err, val) {
-                if (err) {
-                    console.error("Failed to get preferences. code =" + err.code + ", message =" + err.message);
-                    return;
-                }
-                preferences = val;
+            let promise = data_preferences.getPreferences(this.context, 'mystore');
+            promise.then((object) => {
+                preferences = object;
                 console.info("Succeeded in getting preferences.");
-            });
-            preferences.put('ExpressList', JSON.stringify(ExpressList))
-                .catch((err) => {
+            }).catch((err) => {
                 console.error("Failed to get preferences. code =" + err.code + ", message =" + err.message);
-            });
-        }
-        catch (err) {
-            console.error("Failed to get preferences. code =" + err.code + ", message =" + err.message);
+            })
+            // preferences.put('QueryHistory', JSON.stringify(QueryHistory))
+            //     .catch((err) => {
+            //         console.error("Failed to put preferences. code =" + err.code + ", message =" + err.message);
+            //     });
+        } catch(err) {
+            console.error("Failed to get a_preferences. code =" + err.code + ", message =" + err.message);
         }
     }
     onForeground() {
