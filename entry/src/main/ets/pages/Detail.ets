@@ -1,36 +1,33 @@
 import router from '@ohos.router'
 
-interface ExpressState {
-  time: string
-  content: string
-}
-
-interface ListExpress {
+interface ListHistory {
   number: string
-  comName: string
-  updateTime: string
-  isExpressed: boolean
-  list: ExpressState[]
+  area: string
+  areacode: string
+  zip: string
+  company: string
+  province: string
+  city: string
 }
 
 @Entry
 @Component
 struct Detail {
   @State message: string = 'Hello World'
-  @State Express: ListExpress = AppStorage.SetAndLink('Express', {
+  @State Query: ListHistory = AppStorage.SetAndLink('Query', {
     "number": "",
-    "comName": "",
-    "updateTime": "",
-    "isExpressed": false,
-    "list": [
-      { "time": "", "content": "" }
-    ]
+    "area": "",
+    "areacode": "",
+    "zip": "",
+    "company": "",
+    "province": "",
+    "city": ""
   }).get()
 
   build() {
     Row() {
       Column() {
-        Text("<  快递详情")
+        Text("<  手机号详情")
           .fontSize(18)
           .width('100%')
           .margin({ top: 10, bottom: 20, left: 20 })
@@ -45,15 +42,15 @@ struct Detail {
             .margin({ top: 10, bottom: 10, right: 10 })
             .height(54)
           Column() {
-            Text(this.Express.comName)
+            Text(this.Query.number)
               .fontSize(16)
               .fontWeight(FontWeight.Bold)
-            Text(this.Express.number)
+            Text(this.Query.area)
               .fontSize(12)
-            Text(this.Express.list[0].content)
+            Text(this.Query.company)
               .fontSize(12)
               .maxLines(2)
-            Text(this.Express.updateTime)
+            Text(this.Query.zip+" · "+this.Query.areacode)
               .fontSize(12)
           }
           .flexShrink(1)
@@ -66,33 +63,112 @@ struct Detail {
         .width('100%')
         .margin({ bottom: 10 })
 
-        Text("- 送件历史 -")
+        Text("- 详细信息 -")
           .fontSize(16)
           .margin({ bottom: 10 })
 
         Scroll() {
           List({ space: 10, initialIndex: 0 }) {
-            ForEach(this.Express.list, (item, index) => {
-              ListItem() {
-                Row() {
-                  Column() {
-                    Text(item.time)
-                      .fontSize(16)
-                      .fontWeight(FontWeight.Bold)
-                    Text(item.content)
-                      .fontSize(12)
-                  }
-                  .flexShrink(1)
-                  .justifyContent(FlexAlign.Center)
-                  .alignItems(HorizontalAlign.Start)
+            ListItem() {
+              Row() {
+                Column() {
+                  Text("省份")
+                    .fontSize(16)
+                    .fontWeight(FontWeight.Bold)
+                  Text(this.Query.province)
+                    .fontSize(24)
+                    .margin({ top: 10 })
                 }
-                .width('100%')
-                .borderRadius(10)
-                .padding(10)
-                .backgroundColor('#fff')
+                .flexShrink(1)
+                .justifyContent(FlexAlign.Center)
+                .alignItems(HorizontalAlign.Start)
               }
               .width('100%')
-            }, item => item)
+              .borderRadius(10)
+              .padding(10)
+              .backgroundColor('#fff')
+            }
+            .width('100%')
+            ListItem() {
+              Row() {
+                Column() {
+                  Text("城市")
+                    .fontSize(16)
+                    .fontWeight(FontWeight.Bold)
+                  Text(this.Query.city)
+                    .fontSize(24)
+                    .margin({ top: 10 })
+                }
+                .flexShrink(1)
+                .justifyContent(FlexAlign.Center)
+                .alignItems(HorizontalAlign.Start)
+              }
+              .width('100%')
+              .borderRadius(10)
+              .padding(10)
+              .backgroundColor('#fff')
+            }
+            .width('100%')
+            ListItem() {
+              Row() {
+                Column() {
+                  Text("运营商")
+                    .fontSize(16)
+                    .fontWeight(FontWeight.Bold)
+                  Text(this.Query.company)
+                    .fontSize(24)
+                    .margin({ top: 10 })
+                }
+                .flexShrink(1)
+                .justifyContent(FlexAlign.Center)
+                .alignItems(HorizontalAlign.Start)
+              }
+              .width('100%')
+              .borderRadius(10)
+              .padding(10)
+              .backgroundColor('#fff')
+            }
+            .width('100%')
+            ListItem() {
+              Row() {
+                Column() {
+                  Text("地区编码")
+                    .fontSize(16)
+                    .fontWeight(FontWeight.Bold)
+                  Text(this.Query.areacode)
+                    .fontSize(24)
+                    .margin({ top: 10 })
+                }
+                .flexShrink(1)
+                .justifyContent(FlexAlign.Center)
+                .alignItems(HorizontalAlign.Start)
+              }
+              .width('100%')
+              .borderRadius(10)
+              .padding(10)
+              .backgroundColor('#fff')
+            }
+            .width('100%')
+            ListItem() {
+              Row() {
+                Column() {
+                  Text("邮政编码")
+                    .fontSize(16)
+                    .fontWeight(FontWeight.Bold)
+                  Text(this.Query.zip)
+                    .fontSize(24)
+                    .margin({ top: 10 })
+                }
+                .flexShrink(1)
+                .justifyContent(FlexAlign.Center)
+                .alignItems(HorizontalAlign.Start)
+              }
+              .width('100%')
+              .borderRadius(10)
+              .padding(10)
+              .backgroundColor('#fff')
+            }
+            .width('100%')
           }
         }
         .flexShrink(1)

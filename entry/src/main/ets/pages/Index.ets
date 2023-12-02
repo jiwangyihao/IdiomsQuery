@@ -3,54 +3,47 @@ import router from '@ohos.router'
 
 let httpRequest = http.createHttp();
 
-interface ExpressState {
-  time: string
-  content: string
-}
-
-interface ListExpress {
+interface ListHistory {
   number: string
-  comName: string
-  updateTime: string
-  isExpressed: boolean
-  list: ExpressState[]
+  area: string
+  areacode: string
+  zip: string
+  company: string
+  province: string
+  city: string
 }
 
 @Entry
 @Component
 struct Index {
-  @State ExpressingList: ListExpress[] = AppStorage.SetAndLink('ExpressingList', []).get()
-  @State ExpressedList: ListExpress[] = AppStorage.SetAndLink('ExpressedList', []).get()
+  @State QueryHistory: ListHistory[] = AppStorage.SetAndLink('QueryHistory', []).get()
 
   build() {
     Column() {
-      Search({ placeholder: '输入快递单号' })
-        .searchButton('搜索')
+      Search({ placeholder: '输入电话号码' })
+        .searchButton('查询')
         .height(40)
         .margin(20)
         .onSubmit((value: string) => {
-          httpRequest.request("https://apis.tianapi.com/kuaidi/index?key=25399a137b9d70936cf257ea9e33610b&number=" + value, {
+          httpRequest.request("https://apis.juhe.cn/mobile/get?dtype=&key=68b22126dba600fc2d240a8ef5a43270&phone=" + value, {
             header: {
               'Content-Type': 'application/json'
             }
           }).then((data) => {
             console.info('Result:' + data.result);
             const res = JSON.parse(<string> data.result);
-            let item: ListExpress = {
+            let item: ListHistory = {
               number: value,
-              comName: res.result.kuaidiname,
-              updateTime: res.result.updatetime,
-              isExpressed: res.result.status>=4,
-              list: res.result.list
+              area: res.result.province + " · " + res.result.city,
+              areacode: res.result.areacode,
+              zip: res.result.zip,
+              company: res.result.company,
+              province: res.result.province,
+              city: res.result.city
             }
             console.log(JSON.stringify(item))
-            if (item.isExpressed) {
-              this.ExpressedList.push(item);
-              AppStorage.Set('ExpressedList', this.ExpressedList);
-            } else {
-              this.ExpressingList.push(item);
-              AppStorage.Set('ExpressingList', this.ExpressingList);
-            }
+            this.QueryHistory.push(item);
+            AppStorage.Set('QueryHistory', this.QueryHistory);
           }).catch((err) => {
             console.info('error:' + JSON.stringify(err));
           });
@@ -59,22 +52,22 @@ struct Index {
         TabContent() {
           Column() {
             List({ space: 10, initialIndex: 0 }) {
-              ForEach(this.ExpressingList, (item, index) => {
+              ForEach(this.QueryHistory, (item, index) => {
                 ListItem() {
                   Row() {
                     Image($r("app.media.express"))
                       .margin({ top: 10, bottom: 10, right: 10 })
                       .height(54)
                     Column() {
-                      Text(item.comName)
+                      Text(item.number)
                         .fontSize(16)
                         .fontWeight(FontWeight.Bold)
-                      Text(item.number)
+                      Text(item.area)
                         .fontSize(12)
-                      Text(item.list[0].content)
+                      Text(item.company)
                         .fontSize(12)
                         .maxLines(2)
-                      Text(item.updateTime)
+                      Text(item.zip + " · " + item.areacode)
                         .fontSize(12)
                     }
                     .flexShrink(1)
@@ -88,7 +81,7 @@ struct Index {
                 }
                 .width('100%')
                 .onClick(() => {
-                  AppStorage.SetOrCreate('Express', item);
+                  AppStorage.SetOrCreate('Query', item);
                   router.pushUrl({
                     url: 'pages/Detail'
                   })
@@ -97,50 +90,7 @@ struct Index {
             }
             .padding(10)
           }.width('100%').height('100%')
-        }.tabBar(`未签收`)
-
-        TabContent() {
-          Column() {
-            List({ space: 10, initialIndex: 0 }) {
-              ForEach(this.ExpressedList, (item, index) => {
-                ListItem() {
-                  Row() {
-                    Image($r("app.media.express"))
-                      .margin({ top: 10, bottom: 10, right: 10 })
-                      .height(54)
-                    Column() {
-                      Text(item.comName)
-                        .fontSize(16)
-                        .fontWeight(FontWeight.Bold)
-                      Text(item.number)
-                        .fontSize(12)
-                      Text(item.list[0].content)
-                        .fontSize(12)
-                        .maxLines(2)
-                      Text(item.updateTime)
-                        .fontSize(12)
-                    }
-                    .flexShrink(1)
-                    .justifyContent(FlexAlign.Center)
-                    .alignItems(HorizontalAlign.Start)
-                  }
-                  .width('100%')
-                  .borderRadius(10)
-                  .padding(10)
-                  .backgroundColor('#fff')
-                }
-                .width('100%')
-                .onClick(() => {
-                  AppStorage.SetOrCreate('Express', item);
-                  router.pushUrl({
-                    url: 'pages/Detail'
-                  })
-                })
-              }, item => item)
-            }
-            .padding(10)
-          }.width('100%').height('100%')
-        }.tabBar(`已签收`)
+        }.tabBar(`查询历史`)
       }
       .barHeight(48)
       .backgroundColor('#F1F3F5')

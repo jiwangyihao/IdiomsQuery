@@ -15,7 +15,7 @@ export default class EntryAbility extends UIAbility {
         hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
         let preferences = null;
         try {
-            data_preferences.getPreferences(this.context, 'ExpressList', function (err, val) {
+            data_preferences.getPreferences(this.context, 'QueryHistory', function (err, val) {
                 if (err) {
                     console.error("Failed to get preferences. code =" + err.code + ", message =" + err.message);
                     return;
@@ -23,41 +23,13 @@ export default class EntryAbility extends UIAbility {
                 preferences = val;
                 console.info("Succeeded in getting preferences.");
             });
-            preferences.get('ExpressList', '[]').then((value) => {
+            preferences.get('QueryHistory', '[]').then((value) => {
                 console.info("Succeeded in getting preferences value = " + value);
-                let ExpressingList = [];
-                let ExpressedList = [];
+                let QueryHistory = [];
                 JSON.parse(value).forEach(element => {
-                    if (element.isExpressed) {
-                        ExpressedList.push(element);
-                    }
-                    else {
-                        httpRequest.request("https://qqlykm.cn/api/kd/?key=cCjvp4PwzIKpVwlv62wdaCJ86N&number=" + element, {
-                            header: {
-                                'Content-Type': 'application/json'
-                            }
-                        }).then((data) => {
-                            console.info('Result:' + data.result);
-                            const res = JSON.parse(data.result);
-                            if (res.success) {
-                                element.comName = res.data.comName;
-                                element.logo = res.data.logo;
-                                element.list = res.data.list;
-                            }
-                        }).catch((err) => {
-                            console.info('error:' + JSON.stringify(err));
-                        });
-                        if (element.list[0].desc.match(/已签收/)) {
-                            element.isExpressed = true;
-                            ExpressedList.push(element);
-                        }
-                        else {
-                            ExpressingList.push(element);
-                        }
-                    }
+                    QueryHistory.push(element);
                 });
-                AppStorage.SetOrCreate('ExpressingList', ExpressingList);
-                AppStorage.SetOrCreate('ExpressedList', ExpressedList);
+                AppStorage.SetOrCreate('QueryHistory', QueryHistory);
             }).catch((err) => {
                 console.error("Failed to get preferences. code =" + err.code + ", message =" + err.message);
             });
