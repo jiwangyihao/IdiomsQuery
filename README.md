@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **推荐一下本人的新作品：基于 ArkUI-X 的跨平台游戏化叙事驱动番茄钟应用[逐火 FlameChase](https://github.com/jiwangyihao/FlameChase)。**
+> 
+> **以及用于 GitHub Action 的 HarmonyOS SDK（& ArkUI-X SDK）自动化设置工作流 [HarmonyOS GitHub Action setup](https://github.com/jiwangyihao/setup-harmonyos-sdk)**
+
 # IdiomsQuery
 学习 HarmonyOS ArkTS 开发时做的小 Demo。
 
